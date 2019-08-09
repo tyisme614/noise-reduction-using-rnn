@@ -56,10 +56,13 @@ def sequentialized_spectrum(batch, maximum_length):
             if n == sequence_length:
                 final_data[batch_idx, step, :, :] = np.copy(Mag[:, begin_point:end_point])
                 true_time[batch_idx, step] = n
-        else:
-            final_data[batch_idx, step, :, :] = np.copy(
-                create_final_sequence(Mag[:, begin_point:end_point], sequence_length))
-            true_time[batch_idx, step] = n
+            else:
+                print("begin_point=" + str(begin_point))
+                print("end_point=" + str(end_point))
+                print("sequence_length=" + str(sequence_length))
+                final_data[batch_idx, step, :, :] = np.copy(
+                    create_final_sequence(Mag[:, begin_point:end_point], sequence_length))
+                true_time[batch_idx, step] = n
 
     final_data = np.transpose(final_data, (0, 1, 3, 2))
 
@@ -88,11 +91,17 @@ def perfSeqSpectrum(batch):
 # output2 = open(os.path.join(os.getcwd(), 'output2.debug'), 'w')
 # output3 = open(os.path.join(os.getcwd(), 'output3.debug'), 'w')
 # output4 = open(os.path.join(os.getcwd(), 'output4.debug'), 'w')
-#output5 = open(os.path.join(os.getcwd(), 'output5.debug'), 'w')
+# output5 = open(os.path.join(os.getcwd(), 'output5.debug'), 'w')
 # output6 = open(os.path.join(os.getcwd(), 'output6.debug'), 'w')
 
 
 # ----------------- Begin Vars --------------------- #
+
+
+# added by Yuan
+#cache file names and index values of file_repository & clean_repository
+filename_list = [] #file names corresponding to file_repository
+clean_repository_dic = dict() #key: filename  value: index
 
 # Training data directories
 traindata = os.getcwd() + "/Training/NoiseAdded/"
@@ -137,6 +146,7 @@ files_vec = []
 clean_files_fin_vec = []
 clean_files_vec = []
 
+
 # Graph
 lstm_cell = tf.contrib.rnn.BasicLSTMCell(stft_size)
 # stacked_lstm = tf.contrib.rnn.MultiRNNCell([[lstm_cell] for i in number_of_layers])
@@ -168,6 +178,7 @@ for root, _, files in os.walk(traindata):
             srate, data = wav.read(os.path.join(root, f))
             file_repository.append(data)
             rate_repository.append(srate)
+            filename_list.append(f)
 
 # Generate a vector of file names that are clean files
 #clean_files_vec.append(map(formatFilename, temp_list))
@@ -177,6 +188,7 @@ clean_files_vec = list(map(formatFilename, temp_list))
 
 
 # Find clean files that correspond to data in file_repository and buffer clean voice data to memory
+index = 0
 for root, _, files in os.walk(voicedata):
     for each in files:
         if each.endswith(".wav"):
@@ -184,6 +196,8 @@ for root, _, files in os.walk(voicedata):
                 if each == name:
                     srate2, data2 = wav.read(os.path.join(root, name))
                     clean_repository.append(data2)
+                    clean_repository_dic[name] = index
+                    index += 1
                     break
 
 
@@ -209,10 +223,9 @@ for idx in range(run_epochs):
     for file_iter in range(batch_size):
         i = random.randint(0, len(file_repository) - 1)
         files_vec.append(file_repository[i])
-        print(i)
-        print(len(file_repository))
-        print(len(clean_repository))
-        clean_files_fin_vec.append(clean_repository[i])
+        file_name = formatFilename(filename_list[i])
+        index = clean_repository_dic[file_name]
+        clean_files_fin_vec.append(clean_repository[index])
 
     stft_batch = []
     clean_voice_batch = []
@@ -238,8 +251,8 @@ for idx in range(run_epochs):
         print("Batch Loss: " + str(loss_value))
         print(np.min(rnn_outputs_val), np.min(clean_voice_batch[:, time_seq, :, :]))
 
-        print("idx=" + idx)
-        print("run_epochs=" + run_epochs)
+        print("idx=" + str(idx))
+        print("run_epochs=" + str(run_epochs))
 
     if ((idx % (run_epochs) / 10) == 0):
         print(" \n Cumulative epochs loss: " + str(loss_value))
