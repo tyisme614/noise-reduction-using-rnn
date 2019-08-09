@@ -78,7 +78,7 @@ for filename in os.listdir(wavsdir):
 		sr_p, pnoise = wav.read(pinknoise)
 
 		# Create Mixtures:: Noises are pre-normalized to peak at 0dBFS
-		print "Summing "+filename+" with Noises"
+		print("Summing " + filename + " with Noises")
 		mixture1 = np.array(sum_audio(voice_samples_normalized,trunc_len(wnoise, voice_samples_normalized)))
 		mixture2 = np.array(sum_audio(voice_samples_normalized,trunc_len(bnoise, voice_samples_normalized)))
 		mixture3 = np.array(sum_audio(voice_samples_normalized,trunc_len(pnoise, voice_samples_normalized)))
@@ -97,15 +97,14 @@ for filename in os.listdir(wavsdir):
 		
 
 		# Change back to wavs dir for next iteration
-		print "Finished Processing: "+filename
+		print("Finished Processing: " + filename)
 		os.chdir(wavsdir)
 
 
 		# Keep track of file count for debugging
 		filecount = filecount+1
 
-	
-print "Total Files Processed: " + str(filecount)
+print("Total Files Processed: " + str(filecount))
 
 
 

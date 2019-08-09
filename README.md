@@ -1,3 +1,9 @@
+#Info
+Version : 0.0.2
+Developer : Yuan
+Environment: Ubuntu 18.04 x64, Tensorflow 1.14.0(with gpu), Python 3.6.8, scipy 1.3.0, numpy 1.17.0, CUDA 10.0, cudnn7.6.2.24
+Remark : This project is forked from adityatb/noise-reduction-using-rnn on GitHub.com, the original author/developer is adityatb
+
 # Noise Reduction using RNNs with Tensorflow
 Implements python programs to train and test a Recurrent Neural Network with Tensorflow
 

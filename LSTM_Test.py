@@ -222,17 +222,17 @@ for idx in range(run_epochs):
 			sequence_length_tensor: sequence_length_id[:,time_seq]
 		}
 		_, loss_value,final_state_value = sess.run([train_optimizer, mse_loss,final_state],feed_dict=feed_dict)
-		
-		print "Batch Loss: " + str(loss_value)
+
+		print("Batch Loss: " + str(loss_value))
 
 	if((idx%(run_epochs)/10) == 0):
-		print " \n Cumulative epochs loss: " + str(loss_value)
+		print(" \n Cumulative epochs loss: " + str(loss_value))
 		os.chdir(checkpoints)
 		saver.save(sess,'ssep_model',global_step=idx)
-		print "Saved checkpoint"
+		print("Saved checkpoint")
 		os.chdir(traindata)
 
 os.chdir(checkpoints)
 saver.save(sess,'FINAL')
-print "Saved FINAL"		
+print("Saved FINAL")
 sess.close()

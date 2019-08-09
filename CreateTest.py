@@ -18,6 +18,6 @@ files = [os.path.join(work_path, f) for f in src_files if valid_path(work_path, 
 choices = random.sample(files, move_no_files)
 for files in choices:
     shutil.move(files, test_files_path)
-    print "Moved: " + str(files)
+    print("Moved: " + str(files))
 
-print ('Finished!')
+print('Finished!')
