@@ -27,6 +27,7 @@ def create_final_sequence(sequence, max_length):
 def sequentialized_spectrum(batch, maximum_length):
     len(batch)
     max_run_total = int(math.ceil(float(maximum_length) / sequence_length))
+    print("initalize final_data, length=" + str(len(batch)))
     final_data = np.zeros([len(batch), max_run_total, stft_size, sequence_length])
     true_time = np.zeros([len(batch), max_run_total])
 
@@ -57,6 +58,11 @@ def sequentialized_spectrum(batch, maximum_length):
                 final_data[batch_idx, step, :, :] = np.copy(Mag[:, begin_point:end_point])
                 true_time[batch_idx, step] = n
         else:
+            print("batch_idx=" + str(batch_idx))
+            print("step=" + str(step))
+            print("begin_point=" + str(begin_point))
+            print("end_point=" + str(end_point))
+            print("sequence_length=" + str(sequence_length))
             final_data[batch_idx, step, :, :] = np.copy(
                 create_final_sequence(Mag[:, begin_point:end_point], sequence_length))
             true_time[batch_idx, step] = n
@@ -235,17 +241,13 @@ for idx in range(run_epochs):
         _, loss_value, final_state_value, rnn_outputs_val = sess.run(
             [train_optimizer, mse_loss, final_state, rnn_outputs], feed_dict=feed_dict)
 
-        print("Batch Loss: " + str(loss_value))
-        print(np.min(rnn_outputs_val), np.min(clean_voice_batch[:, time_seq, :, :]))
 
-        print("idx=" + idx)
-        print("run_epochs=" + run_epochs)
 
     if ((idx % (run_epochs) / 10) == 0):
-        print(" \n Cumulative epochs loss: " + str(loss_value))
+
         os.chdir(checkpoints)
         saver.save(sess, 'ssep_model', global_step=idx)
-        print("Saved checkpoint")
+
         os.chdir(traindata)
 
 os.chdir(checkpoints)
