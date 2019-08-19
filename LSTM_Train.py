@@ -27,6 +27,7 @@ def create_final_sequence(sequence, max_length):
 def sequentialized_spectrum(batch, maximum_length):
     len(batch)
     max_run_total = int(math.ceil(float(maximum_length) / sequence_length))
+    print("initalize final_data, length=" + str(len(batch)))
     final_data = np.zeros([len(batch), max_run_total, stft_size, sequence_length])
     true_time = np.zeros([len(batch), max_run_total])
 
@@ -57,6 +58,8 @@ def sequentialized_spectrum(batch, maximum_length):
                 final_data[batch_idx, step, :, :] = np.copy(Mag[:, begin_point:end_point])
                 true_time[batch_idx, step] = n
             else:
+                print("batch_idx=" + str(batch_idx))
+                print("step=" + str(step))
                 print("begin_point=" + str(begin_point))
                 print("end_point=" + str(end_point))
                 print("sequence_length=" + str(sequence_length))
