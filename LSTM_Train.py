@@ -27,10 +27,9 @@ def create_final_sequence(sequence, max_length):
 def sequentialized_spectrum(batch, maximum_length):
     len(batch)
     max_run_total = int(math.ceil(float(maximum_length) / sequence_length))
-    print("initalize final_data, length=" + str(len(batch)))
+
     final_data = np.zeros([len(batch), max_run_total, stft_size, sequence_length])
     true_time = np.zeros([len(batch), max_run_total])
-
     # Read in a file and compute spectrum
     for batch_idx, each_set in enumerate(batch):
 
@@ -46,8 +45,6 @@ def sequentialized_spectrum(batch, maximum_length):
 
         # Run a loop long enough to break up all the data in the file into chunks of sequence_size
         for step in range(int(run_total)):
-            print("step is ")
-            print(step)
             begin_point = step * sequence_length
             end_point = begin_point + sequence_length
 
