@@ -35,7 +35,6 @@ def sequentialized_spectrum(batch, maximum_length):
     for batch_idx, each_set in enumerate(batch):
 
         f, t, Sxx = signal.stft(each_set, fs=rate_repository[0], nperseg=stft_size, return_onesided=False)
-
         # Magnitude and Phase Spectra
         Mag = norm_factor * Sxx.real
         Phase = Sxx.imag
@@ -47,8 +46,8 @@ def sequentialized_spectrum(batch, maximum_length):
 
         # Run a loop long enough to break up all the data in the file into chunks of sequence_size
         for step in range(int(run_total)):
-            print("run_total is ")
-            print(run_total)
+            print("step is ")
+            print(step)
             begin_point = step * sequence_length
             end_point = begin_point + sequence_length
 
@@ -64,8 +63,6 @@ def sequentialized_spectrum(batch, maximum_length):
                 # print("begin_point=" + str(begin_point))
                 # print("end_point=" + str(end_point))
                 # print("sequence_length=" + str(sequence_length))
-                print("copy result_sequence, final_data shape: ")
-                print(final_data.shape)
                 a,b,c,d = final_data.shape
                 if step < b:
                     result_sequence = create_final_sequence(Mag[:, begin_point:end_point], sequence_length)
@@ -223,10 +220,13 @@ run_epochs = (no_of_files / batch_size) * epochs
 init_op = tf.global_variables_initializer()  # initialize_all_variables()
 sess = tf.Session()
 sess.run(init_op)
-print("run_epochs=" + str(run_epochs))
+print("start training... \n run_epochs=" + str(run_epochs))
 run_epochs=int(run_epochs)
-for idx in range(run_epochs):
 
+loop_count = 0
+for idx in range(run_epochs):
+    print("loop count is " + str(loop_count))
+    print("idx=" + str(idx))
     files_vec = []
     clean_files_vec = []
     clean_files_fin_vec = []
@@ -272,7 +272,7 @@ for idx in range(run_epochs):
         saver.save(sess, 'ssep_model', global_step=idx)
         #print("Saved checkpoint")
         os.chdir(traindata)
-
+    loop_count += 1
 os.chdir(checkpoints)
 saver.save(sess, 'FINAL')
 print("Saved FINAL")
