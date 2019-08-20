@@ -47,7 +47,8 @@ def sequentialized_spectrum(batch, maximum_length):
 
         # Run a loop long enough to break up all the data in the file into chunks of sequence_size
         for step in range(int(run_total)):
-
+            print("run_total is ")
+            print(run_total)
             begin_point = step * sequence_length
             end_point = begin_point + sequence_length
 
@@ -58,14 +59,22 @@ def sequentialized_spectrum(batch, maximum_length):
                 final_data[batch_idx, step, :, :] = np.copy(Mag[:, begin_point:end_point])
                 true_time[batch_idx, step] = n
             else:
-                print("batch_idx=" + str(batch_idx))
-                print("step=" + str(step))
-                print("begin_point=" + str(begin_point))
-                print("end_point=" + str(end_point))
-                print("sequence_length=" + str(sequence_length))
-                final_data[batch_idx, step, :, :] = np.copy(
-                    create_final_sequence(Mag[:, begin_point:end_point], sequence_length))
-                true_time[batch_idx, step] = n
+                # print("batch_idx=" + str(batch_idx))
+                # print("step=" + str(step))
+                # print("begin_point=" + str(begin_point))
+                # print("end_point=" + str(end_point))
+                # print("sequence_length=" + str(sequence_length))
+                print("copy result_sequence, final_data shape: ")
+                print(final_data.shape)
+                a,b,c,d = final_data.shape
+                if step < b:
+                    result_sequence = create_final_sequence(Mag[:, begin_point:end_point], sequence_length)
+                    final_data[batch_idx, step, :, :] = np.copy(result_sequence)
+                    true_time[batch_idx, step] = n
+                else:
+                    print("error! step is larger than b")
+                    print("size of axis 1 is "  + str(b))
+                    print("step is " + str(step))
 
     final_data = np.transpose(final_data, (0, 1, 3, 2))
 
@@ -251,17 +260,17 @@ for idx in range(run_epochs):
         _, loss_value, final_state_value, rnn_outputs_val = sess.run(
             [train_optimizer, mse_loss, final_state, rnn_outputs], feed_dict=feed_dict)
 
-        print("Batch Loss: " + str(loss_value))
-        print(np.min(rnn_outputs_val), np.min(clean_voice_batch[:, time_seq, :, :]))
+        #print("Batch Loss: " + str(loss_value))
+        #print(np.min(rnn_outputs_val), np.min(clean_voice_batch[:, time_seq, :, :]))
 
-        print("idx=" + str(idx))
-        print("run_epochs=" + str(run_epochs))
+        #print("idx=" + str(idx))
+        #print("run_epochs=" + str(run_epochs))
 
     if ((idx % (run_epochs) / 10) == 0):
-        print(" \n Cumulative epochs loss: " + str(loss_value))
+        #print(" \n Cumulative epochs loss: " + str(loss_value))
         os.chdir(checkpoints)
         saver.save(sess, 'ssep_model', global_step=idx)
-        print("Saved checkpoint")
+        #print("Saved checkpoint")
         os.chdir(traindata)
 
 os.chdir(checkpoints)
